@@ -14,16 +14,10 @@
 <body>
     <h1 style="position:relative; left: 50px; top: 50px">CS 333: Assignment 3</h1>
 
-    <div id="my-visualization"></div>
-    
-    <script>
-        // Load the CSV (because it's in the SAME folder)
-    d3.csv("spotifydata.csv").then(function(data) {
-        console.log("Loaded CSV:", data);
-
-    // Your chart code will go here
-    });
-    </script>
+    <div id="plots">
+        <div id = "parallel"></div>
+        <div id = "scatter"></div>
+    </div>
     
     <!-- Dropdown menu for variable selection -->
     <br><br><br>
@@ -34,14 +28,30 @@
         </button>
         
             <div class="dropdown-menu">
-                <label class="dropdown-item"><input type="checkbox"> Energy</label>
-                <label class="dropdown-item"><input type="checkbox"> Tempo</label>
-                <label class="dropdown-item"><input type="checkbox"> Danceability</label>
-                <label class="dropdown-item"><input type="checkbox"> Loudness</label>
-                <label class="dropdown-item"><input type="checkbox"> Cheeriness</label>
-                <label class="dropdown-item"><input type="checkbox"> Speechiness</label>
-                <label class="dropdown-item"><input type="checkbox"> Duration</label>
-                <label class="dropdown-item"><input type="checkbox"> Track Popularity</label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "energy"> Energy
+                </label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "tempo"> Tempo
+                </label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "danceability"> Danceability
+                </label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "loudness"> Loudness
+                </label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "valence"> Cheeriness
+                </label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "speechiness"> Speechiness
+                </label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "duration_ms"> Duration
+                </label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "track_popularity"> Track Popularity
+                </label>
             </div>
     </div>
 
@@ -88,6 +98,63 @@
     <label style="position:absolute; right: 50px" for="mySlider">Popularity: <span id="sliderValue">68</span></label>
     <br>
     <input style="position:absolute; right: 50px" type="range" id="mySlider" min="68" max="100" value="68">
+
+    <script>
+    function getSelectedVariables() {
+        // Find all checked boxes with class 'var-check'
+        const selected = document.querySelectorAll(".var-check:checked");
+        // Return their values in an array
+        return Array.from(selected).map(d => d.value);
+    }
+
+    function drawScatterplotMatrix(data, variables){
+        if(variables.length === 0){
+            d3.select("#scatter")
+                .append(p)
+                .text("Please Select Variables to Display A Scatterplot Matrix");
+            return;
+        }
+
+        let size = 140
+        let padding = 20
+
+        let svg = d3.select("#scatter")
+            .append("svg")
+            .attr("width", (variables.length*size) + padding)
+            .attr("height", (variables.length*size) + padding);
+
+        const axes = {} 
+        variables.forEach(i=>{
+            const values = data.map(i => +i[v]);
+        })
+
+    }
+
+        // Load the CSV 
+    d3.csv("spotifydata.csv").then(function(data) {
+        console.log("Loaded CSV:", data);
+        data.forEach(i => {
+            i.energy = +i.energy
+            i.tempo = +i.tempo
+            i.danceability = +i.danceability
+            i.loudness = +i.loudness
+            i.valence = +i.valence
+            i.speechiness = +i.speechiness
+            i.duration_ms = +i.duration_ms
+            i.track_popularity = +i.track_popularity
+        });
+
+        document.querySelectorAll(".var-check").forEach(box => {
+            box.addEventListener("change", () => {
+            const variables = getSelectedVariables();
+            console.log("Selected variables:", variables);
+            });
+        });
+
+    // Your chart code will go here
+    });
+    </script>
+
 
     <script>
         const slider = document.getElementById("mySlider");
