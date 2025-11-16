@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS 333: Assignment 3</title>
+
+    <!-- D3 -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- Bootstrap 4 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <h1 style="position:relative; left: 50px; top: 50px">CS 333: Assignment 3</h1>
+
+    <div id="my-visualization"></div>
+    
+    <!-- Dropdown menu for variable selection -->
+    <br><br><br>
+
+    <div class="dropdown" style="position:absolute; right: 50px">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+            Variable Selection
+        </button>
+        
+            <div class="dropdown-menu">
+                <label class="dropdown-item"><input type="checkbox"> Energy</label>
+                <label class="dropdown-item"><input type="checkbox"> Tempo</label>
+                <label class="dropdown-item"><input type="checkbox"> Danceability</label>
+                <label class="dropdown-item"><input type="checkbox"> Loudness</label>
+                <label class="dropdown-item"><input type="checkbox"> Cheeriness</label>
+                <label class="dropdown-item"><input type="checkbox"> Speechiness</label>
+                <label class="dropdown-item"><input type="checkbox"> Duration</label>
+                <label class="dropdown-item"><input type="checkbox"> Track Popularity</label>
+            </div>
+    </div>
+
+    <br><br>
+
+    <!-- Dropdown menu for genre selection -->
+    <div class="dropdown" style="position:absolute; right: 50px">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+            Genre Selection
+        </button>
+            <div class="dropdown-menu" style="max-height:200px; overflow-y: auto;">
+                <label class="dropdown-item"><input type="checkbox"> Pop</label>
+                <label class="dropdown-item"><input type="checkbox"> Rock</label>
+                <label class="dropdown-item"><input type="checkbox"> Jazz</label>
+                <label class="dropdown-item"><input type="checkbox"> Classical</label>
+                <label class="dropdown-item"><input type="checkbox"> Hip-Hop</label>
+                <label class="dropdown-item"><input type="checkbox"> Afrobeats</label>
+                <label class="dropdown-item"><input type="checkbox"> Latin</label>
+                <label class="dropdown-item"><input type="checkbox"> Indian</label>
+                <label class="dropdown-item"><input type="checkbox"> Country</label>
+                <label class="dropdown-item"><input type="checkbox"> R&B</label>
+                <label class="dropdown-item"><input type="checkbox"> Electronic</label>
+                <label class="dropdown-item"><input type="checkbox"> Soul</label>
+                <label class="dropdown-item"><input type="checkbox"> Gaming</label>
+                <label class="dropdown-item"><input type="checkbox"> J-Pop</label>
+                <label class="dropdown-item"><input type="checkbox"> Metal</label>
+                <label class="dropdown-item"><input type="checkbox"> Reggae</label>
+                <label class="dropdown-item"><input type="checkbox"> K-Pop</label>
+                <label class="dropdown-item"><input type="checkbox"> Arabic</label>
+                <label class="dropdown-item"><input type="checkbox"> Punk</label>
+                <label class="dropdown-item"><input type="checkbox"> Blues</label>
+                <label class="dropdown-item"><input type="checkbox"> Folk</label>
+                <label class="dropdown-item"><input type="checkbox"> LoFi</label>
+                <label class="dropdown-item"><input type="checkbox"> Brazilian</label>
+                <label class="dropdown-item"><input type="checkbox"> Ambient</label>
+                <label class="dropdown-item"><input type="checkbox"> Korean</label>
+                <label class="dropdown-item"><input type="checkbox"> World</label>
+                <label class="dropdown-item"><input type="checkbox"> Indie</label>
+            </div>
+    </div>
+
+    <!-- Slider for popularity -->
+    <br><br>
+    <label style="position:absolute; right: 50px" for="mySlider">Popularity: <span id="sliderValue">68</span></label>
+    <br>
+    <input style="position:absolute; right: 50px" type="range" id="mySlider" min="68" max="100" value="68">
+
+    <script>
+        const slider = document.getElementById("mySlider");
+        const valueDisplay = document.getElementById("sliderValue");
+        slider.oninput = () => valueDisplay.textContent = slider.value;
+    </script>
+
+    <!-- Load JS in correct order -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
