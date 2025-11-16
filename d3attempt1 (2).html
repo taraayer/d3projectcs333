@@ -14,7 +14,10 @@
 <body>
     <h1 style="position:relative; left: 50px; top: 50px">CS 333: Assignment 3</h1>
 
-    <div id="my-visualization"></div>
+    <!-- Create a div where the graph will take place -->
+    <div id="plots"></div> 
+
+    <div id="container"></div>
     
     <!-- Dropdown menu for variable selection -->
     <br><br><br>
@@ -76,15 +79,81 @@
 
     <!-- Slider for popularity -->
     <br><br>
-    <label style="position:absolute; right: 50px" for="mySlider">Popularity: <span id="sliderValue">68</span></label>
+    <label style="position:absolute; right: 50px" for="pop_max_slider">Max Popularity: <span id="maxSliderValue">68</span></label>
     <br>
-    <input style="position:absolute; right: 50px" type="range" id="mySlider" min="68" max="100" value="68">
+    <input style="position:absolute; right: 50px" type="range" id="pop_max_slider" min="68" max="100" value="68">
+   
+    <br><br>
+    <label style="position:absolute; right: 50px" for="pop_min_slider">MinPopularity: <span id="minSliderValue">68</span></label>
+    <br>
+    <input style="position:absolute; right: 50px" type="range" id="pop_min_slider" min="68" max="100" value="68">
 
-    <script>
-        const slider = document.getElementById("mySlider");
-        const valueDisplay = document.getElementById("sliderValue");
-        slider.oninput = () => valueDisplay.textContent = slider.value;
-    </script>
+<script>
+d3.csv("spotifydata.csv").then(function(data) {
+    console.log("Loaded CSV:", data);
+
+    // Convert popularity column to number
+    data.forEach(d => d.popularity = +d.popularity);
+
+    const maxSlider = document.getElementById("pop_max_slider");
+    const maxSliderValue = document.getElementById("maxSliderValue");
+
+    const minSlider = document.getElementById("pop_min_slider");
+    const minSliderValue = document.getElementById("minSliderValue");
+
+    const container = document.getElementById("container");
+
+    // Store current popularity threshold
+    let currMaxPop = Number(maxSlider.value);
+    let currMinPop = Number(minSlider.value);
+
+    // Render items as HTML (placeholder function)
+    function update(filteredData) {
+        console.log(filteredData);
+    }
+
+    // Initial display
+    update(data);
+
+    // Update on max slider change
+    maxSlider.addEventListener("input", () => {
+        let newMax = Number(maxSlider.value);
+
+        // Ensure max is not smaller than min
+        if (newMax < currMinPop) {
+            newMax = currMinPop;
+            maxSlider.value = newMax;
+        }
+
+        currMaxPop = newMax;
+        maxSliderValue.textContent = currMaxPop;
+
+        // Filter data between min and max
+        const filtered = data.filter(item => item.popularity >= currMinPop && item.popularity <= currMaxPop);
+        update(filtered);
+    });
+
+    // Update on min slider change
+    minSlider.addEventListener("input", () => {
+        let newMin = Number(minSlider.value);
+
+        // Ensure min is not bigger than max
+        if (newMin > currMaxPop) {
+            newMin = currMaxPop;
+            minSlider.value = newMin;
+        }
+
+        currMinPop = newMin;
+        minSliderValue.textContent = currMinPop;
+
+        // Filter data between min and max
+        const filtered = data.filter(item => item.popularity >= currMinPop && item.popularity <= currMaxPop);
+        update(filtered);
+    });
+});
+
+</script>
+
 
     <!-- Load JS in correct order -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
