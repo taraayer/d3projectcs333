@@ -22,58 +22,75 @@
     <!-- Dropdown menu for variable selection -->
     <br><br><br>
 
-    <div class="dropdown" style="position:absolute; right: 50px">
+    <div id="variableSelection" class="dropdown" style="position:absolute; right: 50px">
         <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
             Variable Selection
         </button>
         
             <div class="dropdown-menu">
-                <label class="dropdown-item"><input type="checkbox"> Energy</label>
-                <label class="dropdown-item"><input type="checkbox"> Tempo</label>
-                <label class="dropdown-item"><input type="checkbox"> Danceability</label>
-                <label class="dropdown-item"><input type="checkbox"> Loudness</label>
-                <label class="dropdown-item"><input type="checkbox"> Cheeriness</label>
-                <label class="dropdown-item"><input type="checkbox"> Speechiness</label>
-                <label class="dropdown-item"><input type="checkbox"> Duration</label>
-                <label class="dropdown-item"><input type="checkbox"> Track Popularity</label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "energy"> Energy
+                </label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "tempo"> Tempo
+                </label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "danceability"> Danceability
+                </label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "loudness"> Loudness
+                </label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "valence"> Cheeriness
+                </label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "speechiness"> Speechiness
+                </label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "duration_ms"> Duration
+                </label>
+                <label class="dropdown-item">
+                    <input type="checkbox" class="var-check" value = "track_popularity"> Track Popularity
+                </label>
             </div>
+
     </div>
 
     <br><br>
 
     <!-- Dropdown menu for genre selection -->
-    <div class="dropdown" style="position:absolute; right: 50px">
+    <div id = "genreSelection" class="dropdown" style="position:absolute; right: 50px">
         <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
             Genre Selection
         </button>
             <div class="dropdown-menu" style="max-height:200px; overflow-y: auto;">
-                <label class="dropdown-item"><input type="checkbox"> Pop</label>
-                <label class="dropdown-item"><input type="checkbox"> Rock</label>
-                <label class="dropdown-item"><input type="checkbox"> Jazz</label>
-                <label class="dropdown-item"><input type="checkbox"> Classical</label>
-                <label class="dropdown-item"><input type="checkbox"> Hip-Hop</label>
-                <label class="dropdown-item"><input type="checkbox"> Afrobeats</label>
-                <label class="dropdown-item"><input type="checkbox"> Latin</label>
-                <label class="dropdown-item"><input type="checkbox"> Indian</label>
-                <label class="dropdown-item"><input type="checkbox"> Country</label>
-                <label class="dropdown-item"><input type="checkbox"> R&B</label>
-                <label class="dropdown-item"><input type="checkbox"> Electronic</label>
-                <label class="dropdown-item"><input type="checkbox"> Soul</label>
-                <label class="dropdown-item"><input type="checkbox"> Gaming</label>
-                <label class="dropdown-item"><input type="checkbox"> J-Pop</label>
-                <label class="dropdown-item"><input type="checkbox"> Metal</label>
-                <label class="dropdown-item"><input type="checkbox"> Reggae</label>
-                <label class="dropdown-item"><input type="checkbox"> K-Pop</label>
-                <label class="dropdown-item"><input type="checkbox"> Arabic</label>
-                <label class="dropdown-item"><input type="checkbox"> Punk</label>
-                <label class="dropdown-item"><input type="checkbox"> Blues</label>
-                <label class="dropdown-item"><input type="checkbox"> Folk</label>
-                <label class="dropdown-item"><input type="checkbox"> LoFi</label>
-                <label class="dropdown-item"><input type="checkbox"> Brazilian</label>
-                <label class="dropdown-item"><input type="checkbox"> Ambient</label>
-                <label class="dropdown-item"><input type="checkbox"> Korean</label>
-                <label class="dropdown-item"><input type="checkbox"> World</label>
-                <label class="dropdown-item"><input type="checkbox"> Indie</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Pop"> Pop</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Rock"> Rock</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Jazz"> Jazz</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Classical"> Classical</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Hip-Hop"> Hip-Hop</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Afrobeats"> Afrobeats</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Latin"> Latin</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Indian"> Indian</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Country"> Country</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="R&B"> R&B</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Electronic"> Electronic</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Soul"> Soul</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Gaming"> Gaming</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="J-Pop"> J-Pop</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Metal"> Metal</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Reggae"> Reggae</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="K-Pop"> K-Pop</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Arabic"> Arabic</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Punk"> Punk</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Blues"> Blues</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Folk"> Folk</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="LoFi"> LoFi</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Brazilian"> Brazilian</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Ambient"> Ambient</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Korean"> Korean</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="World"> World</label>
+                <label class="dropdown-item"><input type="checkbox" class="var-check" value="Indie"> Indie</label>
             </div>
     </div>
 
@@ -89,73 +106,106 @@
     <input style="position:absolute; right: 50px" type="range" id="pop_min_slider" min="68" max="100" value="68">
 
 <script>
-    d3.csv("spotifydata.csv").then(function(data) {
-    console.log("Loaded CSV:", data);
 
-    // Convert popularity column to number
-    data.forEach(d => d.popularity = +d.popularity);
-
-    const maxSlider = document.getElementById("pop_max_slider");
-    const maxSliderValue = document.getElementById("maxSliderValue");
-
-    const minSlider = document.getElementById("pop_min_slider");
-    const minSliderValue = document.getElementById("minSliderValue");
-
-    const container = document.getElementById("container");
-
-    // Store current popularity threshold
-    let currMaxPop = Number(maxSlider.value);
-    let currMinPop = Number(minSlider.value);
-
-    // Render items as HTML (placeholder function)
+    //          HELPER FUNCTIONS         //
+    // updates graphs 
     function update(filteredData) {
         console.log(filteredData);
     }
 
-    // Initial display
-    update(data);
+    // get selected variables from drop down menus
+    function getSelectedVariables(dropdownMenu) {
+        // Find all checked boxes with class 'var-check'
+        const selected = dropdownMenu.querySelectorAll(".var-check:checked");
+        // Return their values in an array
+        return Array.from(selected).map(d => d.value);
+    }
+    
+    // AFTER DATA IMPORTED
+    d3.csv("spotifydata.csv").then(function(data) {
+        console.log("Loaded CSV:", data);
 
-    // Update on max slider change
-    maxSlider.addEventListener("input", () => {
-        let newMax = Number(maxSlider.value);
+        // Convert popularity column to number
+        data.forEach(d => d.popularity = +d.popularity);
 
-        // Ensure max is not smaller than min
-        if (newMax < currMinPop) {
-            newMax = currMinPop;
-            maxSlider.value = newMax;
-        }
+        const maxSlider = document.getElementById("pop_max_slider");
+        const maxSliderValue = document.getElementById("maxSliderValue");
 
-        currMaxPop = newMax;
-        maxSliderValue.textContent = currMaxPop;
+        const minSlider = document.getElementById("pop_min_slider");
+        const minSliderValue = document.getElementById("minSliderValue");
 
-        // Filter data between min and max
-        const filtered = data.filter(item => item.popularity >= currMinPop && item.popularity <= currMaxPop);
-        update(filtered);
+        const container = document.getElementById("container");
 
-        console.log(maxSlider.value);
+        const variableSelection = document.getElementById("variableSelection")
+        const genreSelection = document.getElementById("genreSelection")
+
+        // Store current popularity threshold
+        let currMaxPop = Number(maxSlider.value);
+        let currMinPop = Number(minSlider.value);
+
+        
+        // Initial display
+        update(data);
+
+        // Update on max slider change
+        maxSlider.addEventListener("input", () => {
+            let newMax = Number(maxSlider.value);
+
+            // Ensure max is not smaller than min
+            if (newMax < currMinPop) {
+                newMax = currMinPop;
+                maxSlider.value = newMax;
+            }
+
+            currMaxPop = newMax;
+            maxSliderValue.textContent = currMaxPop;
+
+            console.log(currMaxPop);
+
+            // Filter between min and max
+            const filtered = data.filter(item => item.track_popularity >= currMinPop && item.track_popularity <= currMaxPop);
+            update(filtered);
+        });
+
+        // Update on min slider change
+        minSlider.addEventListener("input", () => {
+            let newMin = Number(minSlider.value);
+
+            // Ensure min is not bigger than max
+            if (newMin > currMaxPop) {
+                newMin = currMaxPop;
+                minSlider.value = newMin;
+            }
+
+            currMinPop = newMin;
+            minSliderValue.textContent = currMinPop;
+
+            console.log(currMinPop);
+
+            // Filter data between min and max
+            const filtered = data.filter(item => item.track_popularity >= currMinPop && item.track_popularity <= currMaxPop);
+            update(filtered);
+        });
+
+        // For Variable Selection
+        variableSelection.addEventListener("change", (event) => {
+            if (event.target.classList.contains("var-check")) {
+                const variables = getSelectedVariables(variableSelection);
+                console.log("Selected Variables:", variables);
+                // Call update or other logic here if needed
+            }
+        });
+
+        // For Genre Selection
+        genreSelection.addEventListener("change", (event) => {
+            if (event.target.classList.contains("var-check")) {
+                const selectedGenres = getSelectedVariables(genreSelection);
+                console.log("Selected Genres:", selectedGenres);
+                // Call update or filtering logic here
+            }
+        });
+
     });
-
-    // Update on min slider change
-    minSlider.addEventListener("input", () => {
-        let newMin = Number(minSlider.value);
-
-        // Ensure min is not bigger than max
-        if (newMin > currMaxPop) {
-            newMin = currMaxPop;
-            minSlider.value = newMin;
-        }
-
-        currMinPop = newMin;
-        minSliderValue.textContent = currMinPop;
-
-        // Filter data between min and max
-        const filtered = data.filter(item => item.popularity >= currMinPop && item.popularity <= currMaxPop);
-        update(filtered);
-
-        console.log(currMinPop.value);
-
-    });
-});
 
 </script>
 
