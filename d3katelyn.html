@@ -89,7 +89,7 @@
     <input style="position:absolute; right: 50px" type="range" id="pop_min_slider" min="68" max="100" value="68">
 
 <script>
-d3.csv("spotifydata.csv").then(function(data) {
+    d3.csv("spotifydata.csv").then(function(data) {
     console.log("Loaded CSV:", data);
 
     // Convert popularity column to number
@@ -131,6 +131,8 @@ d3.csv("spotifydata.csv").then(function(data) {
         // Filter data between min and max
         const filtered = data.filter(item => item.popularity >= currMinPop && item.popularity <= currMaxPop);
         update(filtered);
+
+        console.log(currMaxPop);
     });
 
     // Update on min slider change
@@ -149,6 +151,9 @@ d3.csv("spotifydata.csv").then(function(data) {
         // Filter data between min and max
         const filtered = data.filter(item => item.popularity >= currMinPop && item.popularity <= currMaxPop);
         update(filtered);
+
+        console.log(currMinPop);
+
     });
 });
 
