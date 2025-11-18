@@ -99,7 +99,7 @@
     <input style="position:absolute; right: 50px" type="range" id="pop_max_slider" min="68" max="100" value="100">
    
     <br>
-    <label style="position:absolute; right: 50px" for="pop_min_slider">MinPopularity: <span id="minSliderValue">68</span></label>
+    <label style="position:absolute; right: 50px" for="pop_min_slider">Min Popularity: <span id="minSliderValue">68</span></label>
     <br>
     <input style="position:absolute; right: 50px" type="range" id="pop_min_slider" min="68" max="100" value="68">
 
@@ -236,9 +236,6 @@
             }
         }
 
-    </script>
-
-    <script>
         // Helper function: get selected checkboxes from dropdown
         function getSelectedDropDown(dropdownMenu, type) {
             let selected = [];
@@ -251,6 +248,10 @@
         }
 
 
+    </script>
+
+    <script>
+        
         d3.csv("spotifydata.csv").then(function(data) {
             // console.log("Loaded CSV:", data);
 
