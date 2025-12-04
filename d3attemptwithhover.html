@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS 333: Assignment 3</title>
+
+    <!-- D3 -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- Bootstrap 4 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <h1 style="margin: 40px 0px 10px 50px">CS 333: Assignment 3</h1>
+    <p style="margin: 10px 50px 20px 50px; font-size: 26px"> Select song variables of your choosing from the dropdown, and filter by genres (dropdown) and track popularity (sliders). 
+    A parallel plot and scatterplot matrix will be displayed!</p>
+    
+
+    <!-- FILTERS + BAR GRAPH IN ONE ROW -->
+    <div id="filters-bar-row" style="display:flex; align-items:flex-start; flex-wrap: wrap; gap:30px; margin:40px 20px;">
+
+        <!-- LEFT COLUMN: BAR GRAPH -->
+        <div id="bar-container" style="flex:1; display:flex; justify-content:center;">
+            <div id="bar" style="width:400px; height:300px;"></div>
+        </div>
+
+        <!-- RIGHT COLUMN: FILTERS (Right-Aligned) -->
+        <div id="filters-column" style="display:flex; flex-direction:column; gap:20px; width:350px; align-items:flex-end; margin:10px 50px; margin-left: auto;">
+
+            <!-- Variable Selection -->
+            <div id="variableSelection" class="dropdown">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                    Variable Selection
+                </button>
+                <div class="dropdown-menu">
+                    <label class="dropdown-item"><input type="checkbox" class="var-check" value="energy"> Energy</label>
+                    <label class="dropdown-item"><input type="checkbox" class="var-check" value="tempo"> Tempo</label>
+                    <label class="dropdown-item"><input type="checkbox" class="var-check" value="danceability"> Danceability</label>
+                    <label class="dropdown-item"><input type="checkbox" class="var-check" value="loudness"> Loudness</label>
+                    <label class="dropdown-item"><input type="checkbox" class="var-check" value="valence"> Cheeriness</label>
+                    <label class="dropdown-item"><input type="checkbox" class="var-check" value="speechiness"> Speechiness</label>
+                    <label class="dropdown-item"><input type="checkbox" class="var-check" value="duration_ms"> Duration</label>
+                    <label class="dropdown-item"><input type="checkbox" class="var-check" value="track_popularity"> Popularity</label>
+                </div>
+            </div>
+
+            <!-- Genre Selection -->
+            <div id="genreSelection" class="dropdown">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                    Genre Selection
+                </button>
+                <div class="dropdown-menu" style="max-height:200px; overflow-y:auto;">
+                    <!-- Keep your genre checkboxes here as before -->
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="pop"> Pop</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="rock"> Rock</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="jazz"> Jazz</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="classical"> Classical</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="hip-hop"> Hip-Hop</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="afrobeats"> Afrobeats</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="latin"> Latin</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="indian"> Indian</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="country"> Country</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="r&b"> R&B</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="electronic"> Electronic</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="soul"> Soul</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="gaming"> Gaming</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="j-pop"> J-Pop</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="metal"> Metal</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="reggae"> Reggae</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="k-pop"> K-Pop</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="arabic"> Arabic</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="punk"> Punk</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="blues"> Blues</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="folk"> Folk</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="lofi"> LoFi</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="brazilian"> Brazilian</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="ambient"> Ambient</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="korean"> Korean</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="world"> World</label>
+                    <label class="dropdown-item"><input type="checkbox" class="gen-check" value="indie"> Indie</label>
+                </div>
+            </div>
+
+            <!-- Sliders -->
+            <div style="text-align:right;">
+                <label for="pop_max_slider">Max Popularity: <span id="maxSliderValue">100</span></label>
+                <br>
+                <input type="range" id="pop_max_slider" min="68" max="100" value="100">
+                <br>
+                <label style="margin-top:10px;" for="pop_min_slider">Min Popularity: <span id="minSliderValue">68</span></label>
+                <br>
+                <input type="range" id="pop_min_slider" min="68" max="100" value="68">
+            </div>
+
+            <!-- Legend -->
+            <!-- <div id="genre-legend" style="margin-top:10px;"></div> -->
+
+        </div> <!-- END RIGHT COLUMN -->
+
+    </div>
+    <!-- REPLACE your plots-container + legend with this -->
+    <div id="main-plot-row" style="display:flex; align-items:flex-start; gap:20px; margin: 50px;">
+
+        <!-- LEFT: Plots -->
+        <div id="plots-container" style="display:flex; flex-direction:row; gap:80px; flex-shrink:0;">
+            <div id="parallel" style="width:600px; height:600px;"></div>
+            <div id="scatter" style="width:600px; height:600px;"></div>
+        </div>
+
+        <!-- RIGHT: Legend -->
+        <div id="legend-container" style="flex-shrink:0; max-height:600px; width: 100px; overflow-y:500;align-items:flex-end; margin:10px 50px; margin-left: auto;">
+            <div id="genre-legend"></div>
+        </div>
+
+    </div>
+
+    <script>
+
+        let currentSelection = null;
+
+        function getPlotSize(containerId) {
+            const container = document.getElementById(containerId);
+            const rect = container.getBoundingClientRect();
+            return {
+                width: rect.width - 40,
+                height: rect.height - 20
+            };
+        }
+
+        function drawParallelPlot(data, selVar, width, height, genreColors) {
+            
+            d3.select("#parallel").html(""); // clear old plot
+
+            const margin = { top: 30, right: 50, bottom: 10, left: 50 };
+            const svg = d3.select("#parallel")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const fixedDomains = {
+                energy: [0, 1],
+                tempo: [40, 260],           // adjust to your dataset max tempo
+                danceability: [0, 1],
+                loudness: [-60, 5],        // typical loudness range in dB
+                valence: [0, 1],
+                speechiness: [0, 1],
+                duration_ms: [60000, 550000],  // e.g., up to 10 minutes
+                track_popularity: [60, 100]
+            };
+
+            // Y scale
+            let y = {};
+            selVar.forEach(dim => {
+                y[dim] = d3.scaleLinear()
+                    .domain(fixedDomains[dim])  // use fixed domain
+                    .range([height, 0]);
+
+            });
+
+            // X scale 
+            let x = d3.scalePoint()
+                .domain(selVar)
+                .range([0, width])
+                // .padding(1);
+
+            // Line generator
+            function path(d) {
+                return d3.line()(selVar.map(p => [x(p), y[p](d[p])]));
+            }
+
+            // Draw foreground lines
+            svg.append("g")
+                .attr("class", "foreground")
+                .selectAll("path")
+                .data(data)
+                .join("path")
+                .attr("d", path)
+                .attr("stroke", d => genreColors(d.playlist_genre))
+                .attr("fill", "none")
+                .attr("stroke-width", 1)
+                .attr("stroke-opacity", 0.4);
+
+            // Axis and title for each dimension
+            const g = svg.selectAll(".dimension")
+                .data(selVar)
+                .join("g")
+                .attr("class", "dimension")
+                .attr("transform", d => `translate(${x(d)})`);
+
+            g.append("g")
+                .each(function(d){ d3.select(this).call(d3.axisLeft(y[d])); })
+                .append("text")
+                .style("text-anchor", "middle")
+                .attr("y", -10)
+                .text(d => d)
+                .style("fill", "black")
+                .style("font-size", "12px");
+
+            // Add brushing on each axis
+            g.append("g")
+                .attr("class", "brush")
+                .each(function(d){
+                    d3.select(this)
+                        .call(
+                            d3.brushY()
+                                .extent([[-8, 0], [8, height]])
+                                .on("brush", brushed)
+                                .on("end", brushed)
+                        );
+                });
+
+            // Brushing highlight logic
+            function brushed(event) {
+                const actives = [];
+
+                svg.selectAll(".brush")
+                    .each(function(d) {
+                        const brush = d3.brushSelection(this);
+                        if (brush) {
+                            actives.push({
+                                dim: d,
+                                extent: brush.map(y[d].invert)
+                            });
+                        }
+                    });
+
+                if (actives.length === 0){
+                    currentSelection = null;
+
+                    svg.selectAll(".foreground path")
+                        .attr("stroke-opacity", 0.4);
+
+                    svg.select("#scatter").selectAll("circle")
+                        .attr("fill-opacity", 0.6);
+
+                    return;
+                }
+
+                svg.selectAll(".foreground path")
+                    .attr("stroke-opacity", function(d) {
+                        return actives.every(active => {
+                            return d[active.dim] >= Math.min(...active.extent) &&
+                                d[active.dim] <= Math.max(...active.extent);
+                        }) ? 0.9 : 0.05;
+                    });
+
+                let selectedids = [];
+
+                svg.selectAll(".foreground path")
+                    .each(function(d){
+                        const isChosen = +d3.select(this).attr("stroke-opacity")
+                        if (isChosen>0.5) selectedids.push(d.id);
+                    });
+
+
+                d3.select("#scatter").selectAll("circle")
+                    .each(function(d){
+                        const isSelected = selectedids.includes(d.id);
+                        d3.select(this).attr("fill-opacity", isSelected ? 0.9 : 0.05);
+                    });
+                
+                selectedids = selectedids.filter(id => data.some(d => d.id === id));
+                currentSelection = selectedids.length> 0 ? selectedids : null;
+            }
+        }
+
+        function drawScatterplotMatrix(data, selVar, genreColors) {
+            if (!selVar || selVar.length === 0) {
+                    d3.select("#scatter").selectAll("*").remove();
+                    return;  // prevent drawing
+                }
+
+            // Clear existing scatterplot
+            d3.select("#scatter").html("");
+
+            const container = document.getElementById("scatter");
+            const rect = container.getBoundingClientRect();
+            const width = rect.width - 20;   // small padding
+            const height = rect.height || width; // make it square if height not set
+
+            const n = selVar.length;
+            const margin = { top: 30, right: 30, bottom: 30, left: 30 };
+            const cellSize = Math.min((width - margin.left - margin.right) / n, 
+                                    (height - margin.top - margin.bottom) / n);
+            const padding = Math.max(5, cellSize * 0.05);
+
+            const svg = d3.select("#scatter")
+                .append("svg")
+                .attr("width", margin.left + margin.right + n * cellSize)
+                .attr("height", margin.top + margin.bottom + n * cellSize)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const allRanges = {
+                energy: [0, 1],
+                tempo: [40, 260],
+                danceability: [0, 1],
+                loudness: [-60, 5],
+                valence: [0, 1],
+                speechiness: [0, 1],
+                duration_ms: [60000, 550000],
+                track_popularity: [60, 100]
+            };
+
+            // Create scales for each variable
+            const xScales = {};
+            const yScales = {};
+            selVar.forEach(v => {
+                xScales[v] = d3.scaleLinear()
+                            .domain(allRanges[v])
+                            .range([padding, cellSize - padding]);
+
+                yScales[v] = d3.scaleLinear()
+                            .domain(allRanges[v])
+                            .range([cellSize - padding, padding]);
+            });
+
+            // Build cells
+            const cells = svg.selectAll(".cell")
+                .data(selVar.flatMap(x => selVar.map(y => ({ x, y }))))
+                .join("g")
+                .attr("class", "cell")
+                .attr("transform", d => `translate(${selVar.indexOf(d.x) * cellSize}, ${selVar.indexOf(d.y) * cellSize})`);
+
+            // Cell background
+            cells.append("rect")
+                .attr("x", padding)
+                .attr("y", padding)
+                .attr("width", cellSize-2*padding)
+                .attr("height", cellSize-2*padding)
+                .attr("fill", "white")
+                .attr("stroke", "#ccc");
+
+            // Scatter points
+            cells.each(function(d) {
+                d3.select(this).selectAll("circle")
+                    .data(data)
+                    .join("circle")
+                    .attr("cx", v => xScales[d.x](v[d.x]))
+                    .attr("cy", v => yScales[d.y](v[d.y]))
+                    .attr("r", Math.max(2, cellSize * 0.01))
+                    .attr("fill", v => genreColors(v.playlist_genre))
+                    .attr("fill-opacity", 0.6);
+            });
+
+            //Brushing & Linking
+            cells.each(function(celloption){
+                const cellSelection = d3.select(this);
+
+                const brush = d3.brush()
+                    .extent([[padding, padding], [cellSize - padding, cellSize - padding]])
+                    .on("brush end", function(event){
+                        if(!event.selection){
+                            currentSelection = null;
+
+                            d3.select("#scatter").selectAll("circle")
+                                .attr("fill-opacity", 0.6);
+
+                            d3.select("#parallel").selectAll(".foreground path")
+                                .attr("stroke-opacity", 0.4);
+
+                            return;
+                        }
+
+                        const[[x0, y0], [x1, y1]]= event.selection;
+
+                        let selectedids = [];
+
+                        cellSelection.selectAll("circle").each(function(i){
+                            const circlex = xScales[celloption.x](i[celloption.x]);
+                            const circley = yScales[celloption.y](i[celloption.y]);
+
+                            if (circlex >= x0 && circlex <= x1 && circley >= y0 && circley <= y1){
+                                selectedids.push(i.id)
+                            }
+                        });
+
+                        selectedids = selectedids.filter(id => data.some(d => d.id === id));
+                        currentSelection = selectedids.length> 0 ? selectedids : null;
+
+                        d3.select("#scatter").selectAll("circle")
+                            .each(function(i){
+                                const isSelected = selectedids.includes(i.id);
+                                d3.select(this).attr("fill-opacity", isSelected ? 0.9 : 0.05);
+                            });
+
+                        d3.select("#parallel").selectAll(".foreground path")
+                            .each(function(i){
+                                const isSelected = selectedids.includes(i.id);
+                                d3.select(this).attr("stroke-opacity", isSelected ? 0.9 : 0.05);
+                            });
+                    });
+                
+                    cellSelection.append("g")
+                        .attr("class", "cell-brush")
+                        .call(brush);
+
+                    cellSelection.on("click", function(){
+                        cellSelection.select(".cell-brush").call(brush.move, null);
+                        d3.select("#scatter").selectAll("circle").attr("fill-opacity", 0.6);
+                        d3.select("#parallel").selectAll(".foreground path").attr("stroke-opacity", 0.4);
+                    })
+            });
+
+
+            // Axis and labels
+            const axisTicks = Math.max(2, Math.floor(cellSize / 50));
+            svg.selectAll(".x-axis")
+                .data(selVar)
+                .join("g")
+                .attr("class", "x-axis")
+                .attr("transform", (d, i) => `translate(${i * cellSize}, ${(n * cellSize) - padding})`)
+                .call(d => d.each(function(v) {
+                    const xScale = d3.scaleLinear().domain(allRanges[v]).range([padding, cellSize - padding]);
+                    d3.select(this).call(d3.axisBottom(xScale).ticks(axisTicks));
+                }));
+
+            svg.selectAll(".y-axis")
+                .data(selVar)
+                .join("g")
+                .attr("class", "y-axis")
+                .attr("transform", (d, i) => `translate(${padding}, ${i * cellSize})`)
+                .call(d => d.each(function(v) {
+                    const yScale = d3.scaleLinear().domain(allRanges[v]).range([cellSize - padding, padding]);
+                    d3.select(this).call(d3.axisLeft(yScale).ticks(axisTicks));
+                }));
+
+            svg.selectAll(".x-label")
+                .data(selVar)
+                .join("text")
+                .attr("class", "x-label")
+                .attr("x", (d, i) => i * cellSize + cellSize / 2)
+                .attr("y", n * cellSize + 25)
+                .attr("text-anchor", "middle")
+                .attr("font-weight", "bold")
+                .style("font-size", 12)
+                .text(d => d);
+
+            svg.selectAll(".y-label")
+                .data(selVar)
+                .join("text")
+                .attr("class", "y-label")
+                .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "middle")
+                .attr("x", -margin.left + 15)
+                .attr("y", (d, i) => i * cellSize + cellSize / 2)
+                .attr("transform", (d, i) => `rotate(-90, ${-margin.left + 10}, ${i * cellSize + cellSize / 2})`)
+                .style("font-weight", "bold")
+                .style("font-size", 12)
+                .text(d => d);
+        }
+
+    function drawBarChart(rawData, filteredData, width, height, selVar, selGen, genreColors) {
+        d3.select("#bar").html("");
+
+        // Count songs per selected genre in filteredData
+        const filteredCountsMap = new Map(
+            d3.rollups(
+                filteredData,
+                v => v.length,
+                d => d.playlist_genre
+            )
+        );
+
+        // Count total songs per selected genre in rawData (for shadow bars)
+        const totalCountsMap = new Map(
+            d3.rollups(
+                rawData,
+                v => v.length,
+                d => d.playlist_genre
+            )
+        );
+
+        // Ensure all selected genres are included, even if count = 0
+        const counts = selGen.map(genre => ({
+            genre: genre,
+            count: filteredCountsMap.get(genre) || 0,
+            total: totalCountsMap.get(genre) || 0
+        }));
+
+        const margin = { top: 20, right: 20, bottom: 60, left: 80 }; // increase bottom for x-label
+        const svg = d3.select("#bar")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        const x = d3.scaleLinear()
+            .domain([0, d3.max(counts, d => Math.max(d.count, d.total))])
+            .range([0, width]);
+
+        const y = d3.scaleBand()
+            .domain(counts.map(d => d.genre))
+            .range([0, height])
+            .padding(0.2);
+
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
+        svg.append("g")
+            .attr("transform", `translate(0, ${height})`)
+            .call(d3.axisBottom(x).ticks(5));
+
+        // Shadow bars (total counts)
+        svg.selectAll(".shadow-bar")
+            .data(counts)
+            .join("rect")
+            .attr("class", "shadow-bar")
+            .attr("x", 0)
+            .attr("y", d => y(d.genre))
+            .attr("width", d => x(d.total))
+            .attr("height", y.bandwidth())
+            .attr("fill", "#d3d3d3");
+
+        // Main bars
+        svg.selectAll(".main-bar")
+            .data(counts)
+            .join("rect")
+            .attr("class", "main-bar")
+            .attr("x", 0)
+            .attr("y", d => y(d.genre))
+            .attr("width", d => x(d.count))
+            .attr("height", y.bandwidth())
+            .attr("fill", d => genreColors(d.genre));
+
+        // X-axis label
+        svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("x", width / 2)
+            .attr("y", height + margin.bottom - 15)
+            .text("Song Count")
+            .style("font-weight", "bold")
+            .style("font-size", 14);
+
+        // Y-axis label
+        svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("transform", `translate(${-margin.left + 20}, ${height / 2}) rotate(-90)`)
+            .text("Genre")
+            .style("font-weight", "bold")
+            .style("font-size", 14);
+    }
+
+
+    </script>
+
+    <script>
+        function getSelectedDropDown(dropdownMenu, type) {
+            let selected = [];
+            if (type === "variables") {
+                selected = dropdownMenu.querySelectorAll(".var-check:checked");
+            } else if (type === "genre") {
+                selected = dropdownMenu.querySelectorAll(".gen-check:checked");
+            }
+            return Array.from(selected).map(d => d.value);
+        }
+
+        d3.csv("spotifydata.csv").then(function(data) {
+            data.forEach(d => {
+                d.energy = +d.energy;
+                d.tempo = +d.tempo;
+                d.danceability = +d.danceability;
+                d.loudness = +d.loudness;
+                d.valence = +d.valence;
+                d.speechiness = +d.speechiness;
+                d.track_popularity = +d.track_popularity;
+                d.duration_ms = +d.duration_ms;
+            });
+
+            data.forEach((d, i)=> {d.id = i;});
+
+            const maxSlider = document.getElementById("pop_max_slider");
+            const maxSliderValue = document.getElementById("maxSliderValue");
+            const minSlider = document.getElementById("pop_min_slider");
+            const minSliderValue = document.getElementById("minSliderValue");
+
+            const variableSelection = document.getElementById("variableSelection");
+            const genreSelection = document.getElementById("genreSelection");
+
+            let currMaxPop = Number(maxSlider.value);
+            let currMinPop = Number(minSlider.value);
+            let selVar = [];
+            let selGen = [];
+
+            const allGenres = [
+            "pop","rock","jazz","classical","hip-hop","afrobeats","latin","indian",
+            "country","r&b","electronic","soul","gaming","j-pop","metal","reggae",
+            "k-pop","arabic","punk","blues","folk","lofi","brazilian","ambient",
+            "korean","world","indie"
+            ];
+
+            // Your RGB palette (pick first 27 for 27 genres)
+            const rgbPalette = [
+            [173, 216, 230], // light blue
+            [255, 69, 0],    // orange-red
+            [138, 43, 226],  // blue-violet
+            [255, 204, 0],   // yellow
+            [0, 191, 255],   // deep sky blue
+            [144, 238, 144], // light green
+            [30, 144, 255],  // dodger blue
+            [255, 20, 147],  // deep pink
+            [0, 0, 255],     // blue
+            [124, 252, 0],   // lawn green
+            [0, 0, 139],     // dark blue
+            [218, 112, 214], // orchid
+            [72, 61, 139],   // dark slate blue
+            [240, 128, 128], // light coral
+            [123, 104, 238], // medium slate blue
+            [154, 205, 50],  // yellow-green
+            [128, 0, 128],   // purple
+            [255, 165, 0],   // orange
+            [176, 48, 96],   // maroon
+            [143, 188, 143], // dark sea green
+            [220, 20, 60],   // crimson
+            [128, 128, 0],   // olive
+            [34, 139, 34],   // forest green
+            [255, 0, 255],   // magenta
+            [0, 255, 127],   // spring green
+            [0, 255, 255],   // cyan
+            [139, 69, 19]    // saddle brown
+            ];
+
+            // Convert to CSS rgb() strings
+            const colorStrings = rgbPalette.map(d => `rgb(${d[0]}, ${d[1]}, ${d[2]})`);
+
+            // Create D3 ordinal scale
+            const genreColors = d3.scaleOrdinal()
+            .domain(allGenres)
+            .range(colorStrings);
+
+
+
+            const legendDiv = d3.select("#genre-legend");
+
+            function update(data) {
+                currentSelection = null;
+                const parallelSize = getPlotSize("parallel");
+
+                const scatterSize = getPlotSize("scatter");
+
+                // Filter data
+                let temp = data
+                    .filter(d => d.track_popularity >= currMinPop && d.track_popularity <= currMaxPop)
+                    .filter(d => selGen.includes(d.playlist_genre))
+                    // .map(d => {
+                    //     const obj = {id:d.id, playlist_genre: d.playlist_genre, track_popularity: d.track_popularity };
+                    //     selVar.forEach(col => obj[col] = d[col]);
+                    //     return obj;
+                    // });
+                    .map(d => d)
+
+                // Update legend
+                legendDiv.html("");
+                selGen.forEach(g => {
+                    const item = legendDiv.append("div")
+                        .style("display", "flex")
+                        .style("align-items", "center")
+                        .style("margin-bottom", "3px");
+                    item.append("div")
+                        .style("width", "15px")
+                        .style("height", "15px")
+                        .style("background-color", genreColors(g))
+                        .style("margin-right", "5px");
+                    item.append("span").text(g);
+
+                    //hover tools
+                    item.on("mouseover", (event) =>{
+                        const tooltip = d3.select("#legend-tooltip");
+                        const avgs = computeAvgSongVar(g, temp, selVar);
+
+                        if (!avgs) return;
+
+                        let html = `<strong>${g}</strong><br>`;
+                        html+= `<em>${avgs.count} songs </em><br><br>`;
+
+                        selVar.forEach(v=>{
+                            html += `${v}: ${avgs.averages[v].toFixed(2)}<br>`;
+                        });
+
+                        tooltip.html(html)
+                            .style("left", (event.pageX + 15) + "px")
+                            .style("top", (event.pageY + 10) + "px")
+                            .style("display", "block");
+                    })
+
+                    .on("mousemove", (event) =>{
+                        d3.select("#legend-tooltip")
+                            .style("left", (event.pageX + 15) + "px")
+                            .style("top", (event.pageY + 10) + "px")
+                    })
+
+                    .on("mouseout", () =>{
+                        d3.select("#legend-tooltip").style("display", "none");
+                    });
+                });
+                drawParallelPlot(temp, selVar, parallelSize.width, parallelSize.height, genreColors);
+                drawScatterplotMatrix(temp, selVar, genreColors, scatterSize.width, scatterSize.height);                                
+                drawBarChart(data, temp, 400, 250, selVar, selGen, genreColors)
+                setTimeout(() => { currentSelection = null; }, 0);
+            }
+
+            function computeAvgSongVar(genre, temp, selVar){
+
+                const totaldata = currentSelection
+                    ? temp.filter(d => currentSelection.includes(d.id))
+                    : temp;
+
+                const genredata = totaldata.filter(d => d.playlist_genre === genre)
+                if (genredata.length === 0) return null;
+
+                const averages = {};
+                selVar.forEach(i => {
+                    averages[i] = d3.mean(genredata, d => d[i]);
+                });
+                
+                return {
+                    count : genredata.length,
+                    averages : averages
+                };
+            }
+
+            update(data);
+
+
+            // Slider events
+            maxSlider.addEventListener("input", () => {
+                let newMax = Number(maxSlider.value);
+                if (newMax < currMinPop) {
+                    newMax = currMinPop;
+                    maxSlider.value = newMax;
+                }
+                currMaxPop = newMax;
+                maxSliderValue.textContent = currMaxPop;
+                update(data);
+            });
+
+            minSlider.addEventListener("input", () => {
+                let newMin = Number(minSlider.value);
+                if (newMin > currMaxPop) {
+                    newMin = currMaxPop;
+                    minSlider.value = newMin;
+                }
+                currMinPop = newMin;
+                minSliderValue.textContent = currMinPop;
+                update(data);
+            });
+
+            // Dropdown events
+            document.querySelectorAll(".var-check").forEach(cb => {
+                cb.addEventListener("change", () => {
+                    selVar = getSelectedDropDown(variableSelection, "variables");
+                    update(data);
+                });
+            });
+
+            document.querySelectorAll(".gen-check").forEach(cb => {
+                cb.addEventListener("change", () => {
+                    selGen = getSelectedDropDown(genreSelection, "genre");
+                    update(data);
+                });
+            });
+
+            window.addEventListener("resize", () => update(data));
+
+        });
+    </script>
+
+    <style>
+    #legend-tooltip{
+        position: absolute;
+        padding: 8px 12px;
+        background: white;
+        border: 1px solid #aaa;
+        border-radius: 5px;
+        box-shadow: 0px 0px 6px rgba(0,0,0, 0.2);
+        font-size: 12px;
+        z-index: 9999;
+    }
+    </style>
+
+    <div id="legend-tooltip"></div>
+
+    <!-- Load JS in correct order -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
