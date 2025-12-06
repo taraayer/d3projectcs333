@@ -8,27 +8,27 @@
     <!-- D3 -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
 
-    <!-- Bootstrap 4 CSS -->
+    <!-- CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
     <h1 style="margin: 40px 0px 10px 50px">CS 333: Assignment 3</h1>
     <p style="margin: 10px 50px 20px 50px; font-size: 26px"> Select song variables of your choosing from the dropdown, and filter by genres (dropdown) and track popularity (sliders). 
-    A parallel plot and scatterplot matrix will be displayed!</p>
-    
+    A bar chart, parallel plot, and scatterplot matrix will be displayed! </p>
+    <p style="margin: 10px 50px 20px 50px; font-size:12">The gray area in the bar chart represents the total number of songs within the dataset. The colors sections of the bars correspond to the selected data.</p>
 
-    <!-- FILTERS + BAR GRAPH IN ONE ROW -->
+    <!-- Section for dropdowns, sliders, and bar graph -->
     <div id="filters-bar-row" style="display:flex; align-items:flex-start; flex-wrap: wrap; gap:30px; margin:40px 20px;">
 
-        <!-- LEFT COLUMN: BAR GRAPH -->
+        <!-- Left column: bar graph -->
         <div id="bar-container" style="flex:1; display:flex; justify-content:center;">
             <div id="bar" style="width:400px; height:300px;"></div>
         </div>
 
-        <!-- RIGHT COLUMN: FILTERS (Right-Aligned) -->
+        <!-- Right column: Dropdowns and sliders -->
         <div id="filters-column" style="display:flex; flex-direction:column; gap:20px; width:350px; align-items:flex-end; margin:10px 50px; margin-left: auto;">
 
-            <!-- Variable Selection -->
+            <!-- Variable Selection Dropdown -->
             <div id="variableSelection" class="dropdown">
                 <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
                     Variable Selection
@@ -45,13 +45,12 @@
                 </div>
             </div>
 
-            <!-- Genre Selection -->
+            <!-- Genre Selection Dropdown -->
             <div id="genreSelection" class="dropdown">
                 <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
                     Genre Selection
                 </button>
                 <div class="dropdown-menu" style="max-height:200px; overflow-y:auto;">
-                    <!-- Keep your genre checkboxes here as before -->
                     <label class="dropdown-item"><input type="checkbox" class="gen-check" value="pop"> Pop</label>
                     <label class="dropdown-item"><input type="checkbox" class="gen-check" value="rock"> Rock</label>
                     <label class="dropdown-item"><input type="checkbox" class="gen-check" value="jazz"> Jazz</label>
@@ -82,7 +81,7 @@
                 </div>
             </div>
 
-            <!-- Sliders -->
+            <!-- Popularity Sliders -->
             <div style="text-align:right;">
                 <label for="pop_max_slider">Max Popularity: <span id="maxSliderValue">100</span></label>
                 <br>
@@ -93,19 +92,25 @@
                 <input type="range" id="pop_min_slider" min="68" max="100" value="68">
             </div>
 
-        </div> <!-- END RIGHT COLUMN -->
+        </div> 
 
     </div>
-    <!-- REPLACE your plots-container + legend with this -->
+
+    <br>
+    <p style="margin: 10px 50px 20px 50px; font-size:12">The parallel plot and scatterplot matrix will appear once variables and genres have been selected.</p>
+    <p style="margin: 10px 50px 20px 50px; font-size:12">Further filter data by brushing over the scatterplot matrix or choosing data ranges from the parallel plot axis.</p>
+    <p style="margin: 10px 50px 20px 50px; font-size:12">As you select genres, a legend will appear to the right. Hover over the genre legend for summary statistics of selected data.</p>
+
+    <!-- Scatterplot matrix and parallel plot section -->
     <div id="main-plot-row" style="display:flex; align-items:flex-start; gap:20px; margin: 50px;">
 
-        <!-- LEFT: Plots -->
+        <!-- Left side: Parallel plot and scatterplot matrix -->
         <div id="plots-container" style="display:flex; flex-direction:row; gap:80px; flex-shrink:0;">
             <div id="parallel" style="width:600px; height:600px;"></div>
             <div id="scatter" style="width:600px; height:600px;"></div>
         </div>
 
-        <!-- RIGHT: Legend -->
+        <!-- Right side: Genre Legend -->
         <div id="legend-container" style="flex-shrink:0; max-height:600px; width: 100px; overflow-y:500;align-items:flex-end; margin:10px 50px; margin-left: auto;">
             <div id="genre-legend"></div>
         </div>
@@ -113,9 +118,9 @@
     </div>
 
     <script>
-
         let currentSelection = null;
 
+        // Returns size of html section 
         function getPlotSize(containerId) {
             const container = document.getElementById(containerId);
             const rect = container.getBoundingClientRect();
@@ -125,11 +130,15 @@
             };
         }
 
+        // Draws parallel plot 
         function drawParallelPlot(data, selVar, width, height, genreColors) {
-            
-            d3.select("#parallel").html(""); // clear old plot
+            // Clear parallel plot
+            d3.select("#parallel").html(""); 
 
+            // Margins
             const margin = { top: 30, right: 50, bottom: 10, left: 50 };
+
+            // Create plot svg
             const svg = d3.select("#parallel")
                 .append("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -137,14 +146,15 @@
                 .append("g")
                 .attr("transform", `translate(${margin.left},${margin.top})`);
 
+            // Domains for each song variable
             const fixedDomains = {
                 energy: [0, 1],
-                tempo: [40, 260],           // adjust to your dataset max tempo
+                tempo: [40, 260],           
                 danceability: [0, 1],
-                loudness: [-60, 5],        // typical loudness range in dB
+                loudness: [-60, 5],        
                 valence: [0, 1],
                 speechiness: [0, 1],
-                duration_ms: [60000, 550000],  // e.g., up to 10 minutes
+                duration_ms: [60000, 550000],  
                 track_popularity: [60, 100]
             };
 
@@ -152,7 +162,7 @@
             let y = {};
             selVar.forEach(dim => {
                 y[dim] = d3.scaleLinear()
-                    .domain(fixedDomains[dim])  // use fixed domain
+                    .domain(fixedDomains[dim]) 
                     .range([height, 0]);
 
             });
@@ -208,84 +218,79 @@
                         );
                 });
 
-            // Brushing highlight logic
+            // Helper function for brushing of plot axis
             function brushed(event) {
+                // Collect all active brushes
                 const actives = [];
-
                 svg.selectAll(".brush")
                     .each(function(d) {
                         const brush = d3.brushSelection(this);
                         if (brush) {
                             actives.push({
                                 dim: d,
-                                extent: brush.map(y[d].invert)
+                                extent: brush.map(v => y[d].invert(v)).sort((a,b) => a - b) // ensure min/max
                             });
                         }
                     });
 
-                if (!event.selection) {
+                // If no brushes are active, reset everything
+                if (actives.length === 0){
+                    currentSelection = null;
 
-                            currentSelection = null;
+                    svg.selectAll(".foreground path")
+                        .attr("stroke-opacity", 0.4);
 
-                            d3.select("#scatter").selectAll("circle")
-                                .attr("fill-opacity", 0.6);
+                    d3.select("#scatter").selectAll("circle")
+                        .attr("fill-opacity", 0.6);
 
-                            d3.select("#parallel").selectAll(".foreground path")
-                                .attr("stroke-opacity", 0.4);
+                    // Reset bars
+                    d3.select("#bar").selectAll(".color-bar")
+                        .each(function(d) {
+                            const shadowBar = d3.select("#bar")
+                                .selectAll(".shadow-bar")
+                                .filter(sd => sd.genre === d.genre);
+                            const shadowWidth = shadowBar.attr("width");
+                            if (shadowWidth !== null) {
+                                d3.select(this)
+                                    .attr("width", shadowWidth)
+                                    .attr("fill-opacity", 0.9);
+                            }
+                        });
 
-                            // Reset each main bar to its matching shadow-bar width
-                            d3.select("#bar").selectAll(".main-bar")
-                                .each(function(d) {
+                    return;
+                }
 
-                                    // Find corresponding shadow bar using datum-matching
-                                    const shadowBar = d3.select("#bar")
-                                        .selectAll(".shadow-bar")
-                                        .filter(sd => sd.genre === d.genre);
-
-                                    const shadowWidth = shadowBar.attr("width");
-
-                                    // Only apply if we found the shadow-bar
-                                    if (shadowWidth !== null) {
-                                        d3.select(this)
-                                            .attr("width", shadowWidth)
-                                            .attr("fill-opacity", 0.9);
-                                    }
-                                });
-
-                            return;
-                        }
-
-
+                // Highlight lines that match all active brushes
                 svg.selectAll(".foreground path")
                     .attr("stroke-opacity", function(d) {
-                        return actives.every(active => {
-                            return d[active.dim] >= Math.min(...active.extent) &&
-                                d[active.dim] <= Math.max(...active.extent);
-                        }) ? 0.9 : 0.05;
+                        return actives.every(a => d[a.dim] >= a.extent[0] && d[a.dim] <= a.extent[1]) ? 0.9 : 0.05;
                     });
 
+                // Collect selected IDs
                 let selectedids = [];
-
                 svg.selectAll(".foreground path")
                     .each(function(d){
-                        const isChosen = +d3.select(this).attr("stroke-opacity")
-                        if (isChosen>0.5) selectedids.push(d.id);
+                        if (+d3.select(this).attr("stroke-opacity") > 0.5) selectedids.push(d.id);
                     });
 
+                currentSelection = selectedids.length > 0 ? selectedids : null;
 
+                // Update scatterplot based on selection
                 d3.select("#scatter").selectAll("circle")
-                    .each(function(d){
-                        const isSelected = selectedids.includes(d.id);
-                        d3.select(this).attr("fill-opacity", isSelected ? 0.9 : 0.05);
-                    });
-                
-                selectedids = selectedids.filter(id => data.some(d => d.id === id));
-                currentSelection = selectedids.length> 0 ? selectedids : null;
+                    .attr("fill-opacity", d => currentSelection && currentSelection.includes(d.id) ? 0.9 : 0.05);
 
-                // Compute counts per genre based on currentSelection
+                // Remove gray selection from scatterplot matrix
+                d3.select("#scatter")
+                    .selectAll(".cell-brush")
+                    .each(function() {
+                        const brush = d3.brush();
+                        d3.select(this).call(brush.move, null); 
+                    });
+
+                // Update bars based on selection
                 const filteredData = currentSelection 
                     ? data.filter(d => currentSelection.includes(d.id)) 
-                    : data; // use all data if nothing is selected
+                    : data;
 
                 const genreCounts = new Map(
                     d3.rollups(
@@ -295,40 +300,40 @@
                     )
                 );
 
-                // Update bars
-                d3.select("#bar").selectAll(".main-bar")
+                d3.select("#bar").selectAll(".color-bar")
                     .each(function(d) {
                         const count = genreCounts.get(d.genre) || 0;
-                        console.log("count:", count);
                         const isSelected = !currentSelection || count > 0;
 
                         d3.select(this)
                             .attr("fill-opacity", isSelected ? 0.9 : 0.05)
-                            .attr("width", count); // adjust barMaxWidth to your chart width
+                            .attr("width", count); 
                     });
             }
+
         }
 
+        // Draws scatterplot matrix
         function drawScatterplotMatrix(data, selVar, genreColors) {
             if (!selVar || selVar.length === 0) {
-                    d3.select("#scatter").selectAll("*").remove();
-                    return;  // prevent drawing
-                }
+                d3.select("#parallel").html("");
+                return;  
+            }
 
             // Clear existing scatterplot
             d3.select("#scatter").html("");
 
             const container = document.getElementById("scatter");
             const rect = container.getBoundingClientRect();
-            const width = rect.width - 20;   // small padding
-            const height = rect.height || width; // make it square if height not set
+            const width = rect.width - 20;  
+            const height = rect.height || width;
 
             const n = selVar.length;
             const margin = { top: 30, right: 30, bottom: 30, left: 30 };
-            const cellSize = Math.min((width - margin.left - margin.right) / n, 
-                                    (height - margin.top - margin.bottom) / n);
+            const cellSize = Math.min((width - margin.left - margin.right) / n, (height - margin.top - margin.bottom) / n);
             const padding = Math.max(5, cellSize * 0.05);
 
+            // Create svg for plot
             const svg = d3.select("#scatter")
                 .append("svg")
                 .attr("width", margin.left + margin.right + n * cellSize)
@@ -336,7 +341,8 @@
                 .append("g")
                 .attr("transform", `translate(${margin.left},${margin.top})`);
 
-            const allRanges = {
+            // Preset values for each range of the different variables
+            const fixedDomains = {
                 energy: [0, 1],
                 tempo: [40, 260],
                 danceability: [0, 1],
@@ -352,11 +358,11 @@
             const yScales = {};
             selVar.forEach(v => {
                 xScales[v] = d3.scaleLinear()
-                            .domain(allRanges[v])
+                            .domain(fixedDomains[v])
                             .range([padding, cellSize - padding]);
 
                 yScales[v] = d3.scaleLinear()
-                            .domain(allRanges[v])
+                            .domain(fixedDomains[v])
                             .range([cellSize - padding, padding]);
             });
 
@@ -376,7 +382,7 @@
                 .attr("fill", "white")
                 .attr("stroke", "#ccc");
 
-            // Scatter points
+            // Adding scatter points
             cells.each(function(d) {
                 d3.select(this).selectAll("circle")
                     .data(data)
@@ -388,26 +394,28 @@
                     .attr("fill-opacity", 0.6);
             });
 
-            //Brushing & Linking
-            cells.each(function(celloption){
+            // Brushing in each cell and linking to all plots updating
+            cells.each(function(selectedCell){
                 const cellSelection = d3.select(this);
 
                 const brush = d3.brush()
                     .extent([[padding, padding], [cellSize - padding, cellSize - padding]])
                     .on("brush end", function(event){
-                    
+                        // Resets if nothing is selected
                         if (!event.selection) {
 
                             currentSelection = null;
 
+                            // Reset scatterplot matrix
                             d3.select("#scatter").selectAll("circle")
                                 .attr("fill-opacity", 0.6);
 
+                            // Reset parallel plot
                             d3.select("#parallel").selectAll(".foreground path")
                                 .attr("stroke-opacity", 0.4);
 
-                            // Reset each main bar to its matching shadow-bar width
-                            d3.select("#bar").selectAll(".main-bar")
+                            // Reset bar chart
+                            d3.select("#bar").selectAll(".color-bar")
                                 .each(function(d) {
 
                                     // Find corresponding shadow bar using datum-matching
@@ -432,9 +440,10 @@
 
                         let selectedids = [];
 
+                        // Finding selected data
                         cellSelection.selectAll("circle").each(function(i){
-                            const circlex = xScales[celloption.x](i[celloption.x]);
-                            const circley = yScales[celloption.y](i[celloption.y]);
+                            const circlex = xScales[selectedCell.x](i[selectedCell.x]);
+                            const circley = yScales[selectedCell.y](i[selectedCell.y]);
 
                             if (circlex >= x0 && circlex <= x1 && circley >= y0 && circley <= y1){
                                 selectedids.push(i.id)
@@ -442,39 +451,38 @@
                         });
 
                         selectedids = selectedids.filter(id => data.some(d => d.id === id));
-                        currentSelection = selectedids.length> 0 ? selectedids : null;
 
+
+                        currentSelection = selectedids.length> 0 
+                            ? selectedids 
+                            : null;
+
+                        // Update scatterplot matrix based on selected data
                         d3.select("#scatter").selectAll("circle")
                             .each(function(i){
                                 const isSelected = selectedids.includes(i.id);
                                 d3.select(this).attr("fill-opacity", isSelected ? 0.9 : 0.05);
                             });
 
+                        // Update parallel plot based on selected data
                         d3.select("#parallel").selectAll(".foreground path")
                             .each(function(i){
                                 const isSelected = selectedids.includes(i.id);
                                 d3.select(this).attr("stroke-opacity", isSelected ? 0.9 : 0.05);
                             });
-                        
-                        // d3.select("#bar").selectAll(".main-bar")
-                        //     .each(function(d) {
-                        //         let isSelected;
-                        //         if (!currentSelection) {
-                        //             // No selection → show all bars
-                        //             isSelected = true;
-                        //         } else {
-                        //             // Highlight bars whose genre matches any selected item
-                        //             isSelected = data
-                        //                 .filter(s => currentSelection.includes(s.id))
-                        //                 .some(s => s.playlist_genre === d.genre);
-                        //         }
-                        //         d3.select(this).attr("fill-opacity", isSelected ? 0.9 : 0.05);
-                        //     });
 
+                        // Remove gray selection from scatterplot matrix
+                        d3.select("#parallel")
+                            .selectAll(".brush")
+                            .each(function() {
+                                const brush = d3.brush();
+                                d3.select(this).call(brush.move, null); 
+                            });
+                        
                         // Compute counts per genre based on currentSelection
                         const filteredData = currentSelection 
                             ? data.filter(d => currentSelection.includes(d.id)) 
-                            : data; // use all data if nothing is selected
+                            : data; 
 
                         const genreCounts = new Map(
                             d3.rollups(
@@ -485,7 +493,7 @@
                         );
 
                         // Update bars
-                        d3.select("#bar").selectAll(".main-bar")
+                        d3.select("#bar").selectAll(".color-bar")
                             .each(function(d) {
                                 const count = genreCounts.get(d.genre) || 0;
                                 console.log("count:", count);
@@ -500,6 +508,7 @@
                         
                     });
                 
+                    // Have only one brushed selection highlighted
                     const brushGroup = cellSelection.append("g")
                         .attr("class", "cell-brush")
                         .call(brush);
@@ -512,13 +521,19 @@
                                 .each(function(d) {
                                     d3.select(this).call(brush.move, null);
                                 });
+
+                            svg.selectAll("rect.selection")
+                                .attr("fill-opacity", 0.5)
+                                .attr("stroke-opacity", 0.5); 
                         });
 
+                    // Resets plots after selected data is deselected by clicking
                     cellSelection.on("click", function(){
                         cellSelection.select(".cell-brush").call(brush.move, null);
                         d3.select("#scatter").selectAll("circle").attr("fill-opacity", 0.6);
                         d3.select("#parallel").selectAll(".foreground path").attr("stroke-opacity", 0.4);
-                        d3.select("#bar").selectAll(".main-bar").attr("fill-opacity", 0.9);
+                         
+                        d3.select("#bar").selectAll(".color-bar").attr("fill-opacity", 0.9);
                     })
             });
 
@@ -531,7 +546,7 @@
                 .attr("class", "x-axis")
                 .attr("transform", (d, i) => `translate(${i * cellSize}, ${(n * cellSize) - padding})`)
                 .call(d => d.each(function(v) {
-                    const xScale = d3.scaleLinear().domain(allRanges[v]).range([padding, cellSize - padding]);
+                    const xScale = d3.scaleLinear().domain(fixedDomains[v]).range([padding, cellSize - padding]);
                     d3.select(this).call(d3.axisBottom(xScale).ticks(axisTicks));
                 }));
 
@@ -541,7 +556,8 @@
                 .attr("class", "y-axis")
                 .attr("transform", (d, i) => `translate(${padding}, ${i * cellSize})`)
                 .call(d => d.each(function(v) {
-                    const yScale = d3.scaleLinear().domain(allRanges[v]).range([cellSize - padding, padding]);
+                    const yScale = d3.scaleLinear().domain(fixedDomains[v])
+                                                    .range([cellSize - padding, padding]);
                     d3.select(this).call(d3.axisLeft(yScale).ticks(axisTicks));
                 }));
 
@@ -570,102 +586,106 @@
                 .text(d => d);
         }
 
-    function drawBarChart(rawData, filteredData, width, height, selVar, selGen, genreColors) {
-        d3.select("#bar").html("");
+        // Update bar chart of genre count
+        function drawBarChart(rawData, filteredData, width, height, selVar, selGen, genreColors) {
+            // Clear bar chart
+            d3.select("#bar").html("");
 
-        // Count songs per selected genre in filteredData
-        const filteredCountsMap = new Map(
-            d3.rollups(
-                filteredData,
-                v => v.length,
-                d => d.playlist_genre
-            )
-        );
+            // Count songs per selected genre in filteredData
+            const filteredCountsMap = new Map(
+                d3.rollups(
+                    filteredData,
+                    v => v.length,
+                    d => d.playlist_genre
+                )
+            );
 
-        // Count total songs per selected genre in rawData (for shadow bars)
-        const totalCountsMap = new Map(
-            d3.rollups(
-                rawData,
-                v => v.length,
-                d => d.playlist_genre
-            )
-        );
+            // Count total songs per selected genre in rawData 
+            const totalCountsMap = new Map(
+                d3.rollups(
+                    rawData,
+                    v => v.length,
+                    d => d.playlist_genre
+                )
+            );
 
-        // Ensure all selected genres are included, even if count = 0
-        const counts = selGen.map(genre => ({
-            genre: genre,
-            count: filteredCountsMap.get(genre) || 0,
-            total: totalCountsMap.get(genre) || 0
-        }));
+            // Ensure all selected genres are included
+            const counts = selGen.map(genre => ({
+                genre: genre,
+                count: filteredCountsMap.get(genre) || 0,
+                total: totalCountsMap.get(genre) || 0
+            }));
 
-        const margin = { top: 20, right: 20, bottom: 60, left: 80 }; // increase bottom for x-label
-        const svg = d3.select("#bar")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
+            const margin = { top: 20, right: 20, bottom: 60, left: 80 }; 
 
-        const x = d3.scaleLinear()
-            .domain([0, d3.max(counts, d => Math.max(d.count, d.total))])
-            .range([0, width]);
+            // Create svg for bar chart
+            const svg = d3.select("#bar")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        const y = d3.scaleBand()
-            .domain(counts.map(d => d.genre))
-            .range([0, height])
-            .padding(0.2);
+            // Scales for axis
+            const x = d3.scaleLinear()
+                .domain([0, d3.max(counts, d => Math.max(d.count, d.total))])
+                .range([0, width]);
 
-        svg.append("g")
-            .call(d3.axisLeft(y));
+            const y = d3.scaleBand()
+                .domain(counts.map(d => d.genre))
+                .range([0, height])
+                .padding(0.2);
 
-        svg.append("g")
-            .attr("transform", `translate(0, ${height})`)
-            .call(d3.axisBottom(x).ticks(5));
+            svg.append("g")
+                .call(d3.axisLeft(y));
 
-        // Shadow bars (total counts)
-        svg.selectAll(".shadow-bar")
-            .data(counts)
-            .join("rect")
-            .attr("class", "shadow-bar")
-            .attr("x", 0)
-            .attr("y", d => y(d.genre))
-            .attr("width", d => x(d.total))
-            .attr("height", y.bandwidth())
-            .attr("fill", "#d3d3d3");
+            svg.append("g")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(x).ticks(5));
 
-        // Main bars
-        svg.selectAll(".main-bar")
-            .data(counts)
-            .join("rect")
-            .attr("class", "main-bar")
-            .attr("x", 0)
-            .attr("y", d => y(d.genre))
-            .attr("width", d => x(d.count))
-            .attr("height", y.bandwidth())
-            .attr("fill", d => genreColors(d.genre));
+            // Shadow bars (total counts)
+            svg.selectAll(".shadow-bar")
+                .data(counts)
+                .join("rect")
+                .attr("class", "shadow-bar")
+                .attr("x", 0)
+                .attr("y", d => y(d.genre))
+                .attr("width", d => x(d.total))
+                .attr("height", y.bandwidth())
+                .attr("fill", "#d3d3d3");
 
-        // X-axis label
-        svg.append("text")
-            .attr("text-anchor", "middle")
-            .attr("x", width / 2)
-            .attr("y", height + margin.bottom - 15)
-            .text("Song Count")
-            .style("font-weight", "bold")
-            .style("font-size", 14);
+            // Color bars (counts based on filteredData)
+            svg.selectAll(".color-bar")
+                .data(counts)
+                .join("rect")
+                .attr("class", "color-bar")
+                .attr("x", 0)
+                .attr("y", d => y(d.genre))
+                .attr("width", d => x(d.count))
+                .attr("height", y.bandwidth())
+                .attr("fill", d => genreColors(d.genre));
 
-        // Y-axis label
-        svg.append("text")
-            .attr("text-anchor", "middle")
-            .attr("transform", `translate(${-margin.left + 20}, ${height / 2}) rotate(-90)`)
-            .text("Genre")
-            .style("font-weight", "bold")
-            .style("font-size", 14);
-    }
+            // X-axis label
+            svg.append("text")
+                .attr("text-anchor", "middle")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom - 15)
+                .text("Song Count")
+                .style("font-weight", "bold")
+                .style("font-size", 14);
 
-
+            // Y-axis label
+            svg.append("text")
+                .attr("text-anchor", "middle")
+                .attr("transform", `translate(${-margin.left + 20}, ${height / 2}) rotate(-90)`)
+                .text("Genre")
+                .style("font-weight", "bold")
+                .style("font-size", 14);
+        }
     </script>
 
     <script>
+        // Return selected variables and genres from dropdown menu
         function getSelectedDropDown(dropdownMenu, type) {
             let selected = [];
             if (type === "variables") {
@@ -703,14 +723,15 @@
             let selVar = [];
             let selGen = [];
 
+            // All genre names
             const allGenres = [
-            "pop","rock","jazz","classical","hip-hop","afrobeats","latin","indian",
-            "country","r&b","electronic","soul","gaming","j-pop","metal","reggae",
-            "k-pop","arabic","punk","blues","folk","lofi","brazilian","ambient",
-            "korean","world","indie"
+                "pop","rock","jazz","classical","hip-hop","afrobeats","latin","indian",
+                "country","r&b","electronic","soul","gaming","j-pop","metal","reggae",
+                "k-pop","arabic","punk","blues","folk","lofi","brazilian","ambient",
+                "korean","world","indie"
             ];
 
-            // Your RGB palette (pick first 27 for 27 genres)
+            // RGB palette
             const rgbPalette = [
             [173, 216, 230], // light blue
             [255, 69, 0],    // orange-red
@@ -741,18 +762,17 @@
             [139, 69, 19]    // saddle brown
             ];
 
-            // Convert to CSS rgb() strings
+            // Convert to CSS rgb
             const colorStrings = rgbPalette.map(d => `rgb(${d[0]}, ${d[1]}, ${d[2]})`);
 
-            // Create D3 ordinal scale
+            // Create scale
             const genreColors = d3.scaleOrdinal()
             .domain(allGenres)
             .range(colorStrings);
 
-
-
             const legendDiv = d3.select("#genre-legend");
 
+            // Update function that updates all the plots based on filtering from brushing, dropdowns, and sliders
             function update(data) {
                 currentSelection = null;
                 const parallelSize = getPlotSize("parallel");
@@ -783,15 +803,15 @@
                         .style("margin-right", "5px");
                     item.append("span").text(g);
 
-                    //hover tools
+                    // Hover tools
                     item.on("mouseover", (event) =>{
                         const tooltip = d3.select("#legend-tooltip");
                         const avgs = computeAvgSongVar(g, temp, selVar);
 
                         if (!avgs) return;
 
-                        // ---- GET BAR LENGTHS ----
-                        const mainBar = d3.select("#bar").selectAll(".main-bar")
+                        // Getting bar lengths
+                        const mainBar = d3.select("#bar").selectAll(".color-bar")
                             .filter(d => d.genre === g);
                         const shadowBar = d3.select("#bar").selectAll(".shadow-bar")
                             .filter(d => d.genre === g);
@@ -799,13 +819,12 @@
                         const mainWidth = parseFloat(mainBar.attr("width")) || 0;
                         const shadowWidth = parseFloat(shadowBar.attr("width")) || 1;
 
-                        // ---- GET TOTAL COUNTS FROM RAW DATA ----
+                        // Get total counts from raw data
                         const rawDatum = shadowBar.datum();   
-                        const totalCount = rawDatum ? rawDatum.total : 0;   // 👈 TOTAL SONGS FROM RAW DATA
+                        const totalCount = rawDatum ? rawDatum.total : 0;
 
                         const pct = shadowWidth > 0 ? (mainWidth / shadowWidth) * 100 : 0;
 
-                        // ---- Tooltip HTML ----
                         let html = `<strong>${g}</strong><br>`;
                         html += `<em>Selected ${avgs.count} songs</em><br>`;
                         html += `<em>Total ${totalCount} songs</em><br><br>`;
@@ -821,6 +840,7 @@
                             .style("display", "block");
                     })
 
+                    // Tooltip
                     .on("mousemove", (event) =>{
                         d3.select("#legend-tooltip")
                             .style("left", (event.pageX + 15) + "px")
@@ -831,12 +851,15 @@
                         d3.select("#legend-tooltip").style("display", "none");
                     });
                 });
+
+                // Update plots
                 setTimeout(() => { currentSelection = null; }, 0);
                 drawParallelPlot(temp, selVar, parallelSize.width, parallelSize.height, genreColors);
                 drawScatterplotMatrix(temp, selVar, genreColors, scatterSize.width, scatterSize.height);                                
                 drawBarChart(data, temp, 400, 250, selVar, selGen, genreColors)
             }
 
+            // Computes average of each selected variable for each selected genre
             function computeAvgSongVar(genre, temp, selVar){
 
                 const totaldata = currentSelection
